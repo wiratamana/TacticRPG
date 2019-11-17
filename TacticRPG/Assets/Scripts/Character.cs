@@ -7,7 +7,7 @@ namespace TacticRPG
     [CreateAssetMenu(fileName = "Character", menuName = "Create/Character", order = 1)]
     public class Character : ScriptableObject
     {
-        public Sprite sprite;
+        public Sprite characterFace;
         public int level;
         public int hp;
         public int mp;
