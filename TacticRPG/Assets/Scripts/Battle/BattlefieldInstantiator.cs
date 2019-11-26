@@ -27,6 +27,7 @@ namespace TacticRPG
         {
             if(start == null)
             {
+                Clear();
                 start = node;
                 return;
             }
@@ -37,6 +38,19 @@ namespace TacticRPG
                 pathfinding.GetPath(start, destination);
                 start = null;
                 destination = null;
+            }
+        }
+
+        private void Clear()
+        {
+            foreach(var a in battlefield.field)
+            {
+                if(a.isTraversible == false)
+                {
+                    continue;
+                }
+
+                a.GetComponent<SpriteRenderer>().color = Color.white;
             }
         }
 
@@ -60,6 +74,12 @@ namespace TacticRPG
                     var nodeComponent = node.GetComponent<Node>();
                     nodeComponent.Setup(battlefield, new Coordinate(x, y));
                     nodeComponent.isTraversible = true;
+
+                    if(x == 1 && y < 5)
+                    {
+                        nodeComponent.isTraversible = false;
+                        nodeComponent.GetComponent<SpriteRenderer>().color = Color.gray;
+                    }
 
                     battlefield.field[x, y] = nodeComponent;
                 }
