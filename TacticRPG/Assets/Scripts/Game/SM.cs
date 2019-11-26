@@ -12,8 +12,15 @@ namespace TacticRPG
 
         public enum SceneList
         {
-            Home, Unit, Story, Option
+            Home, Unit, Story, Option,
+            ChangeFormation, ChangeEquipment, ChangeJob, UpgradeSkill,
+            Conversation, BattlePreparation
         }
+
+        public static EventManager<SceneList> OnBeforeUnload { private set; get; } = new EventManager<SceneList>();
+        public static EventManager<SceneList> OnAfterUnload  { private set; get; } = new EventManager<SceneList>();
+        public static EventManager<SceneList> OnBeforeLoad { private set; get; } = new EventManager<SceneList>();
+        public static EventManager<SceneList> OnAfterLoad { private set; get; } = new EventManager<SceneList>();
 
         private static SceneList CurrentActiveScene = SceneList.Home;
 
@@ -42,23 +49,31 @@ namespace TacticRPG
             CurrentActiveScene = scene;
         }
 
-        public void LoadScene(SceneList scene)
+        public void ChangeScene(SceneList scene)
         {
             var loadScene = scene;
-            StartCoroutine(UnloadScene(() => 
-            {
-                SceneManager.LoadScene(scene.ToString(), LoadSceneMode.Additive);
-                CurrentActiveScene = loadScene;
-            }));
+            StartCoroutine(ChangeSceneCoroutine(scene));
         }
         
-        private IEnumerator UnloadScene(UnityAction afterUnload)
+        private IEnumerator ChangeSceneCoroutine(SceneList scene)
         {
+            OnBeforeUnload?.Invoke(CurrentActiveScene);
+            OnBeforeUnload.RemoveAllListeners();
             var unloadProgress = SceneManager.UnloadSceneAsync(CurrentActiveScene.ToString());
 
             yield return unloadProgress;
 
-            afterUnload?.Invoke();
+            OnAfterUnload?.Invoke(CurrentActiveScene);
+            OnAfterUnload?.RemoveAllListeners();
+            OnBeforeLoad?.Invoke(scene);
+            OnBeforeLoad?.RemoveAllListeners();
+            unloadProgress = SceneManager.LoadSceneAsync(scene.ToString(), LoadSceneMode.Additive);
+
+            yield return unloadProgress;
+
+            OnAfterLoad?.Invoke(scene);
+            OnAfterLoad?.RemoveAllListeners();
+            CurrentActiveScene = scene;
         }
     }
 }
