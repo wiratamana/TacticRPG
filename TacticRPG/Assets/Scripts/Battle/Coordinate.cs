@@ -18,6 +18,46 @@ namespace TacticRPG
             this.y = y;
         }
 
+        public static Coordinate directionZero
+        {
+            get
+            {
+                return new Coordinate(0, 0);
+            }
+        }
+
+        public static Coordinate directionUp
+        {
+            get
+            {
+                return new Coordinate(0, 1);
+            }
+        }
+
+        public static Coordinate directionDown
+        {
+            get
+            {
+                return new Coordinate(0, -1);
+            }
+        }
+
+        public static Coordinate directionRight
+        {
+            get
+            {
+                return new Coordinate(1, 0);
+            }
+        }
+
+        public static Coordinate directionLeft
+        {
+            get
+            {
+                return new Coordinate(-1, 0);
+            }
+        }
+
         public static Coordinate operator +(Coordinate a, Coordinate b)
         {
             return new Coordinate(a.x + b.x, a.y + b.y);
@@ -26,6 +66,16 @@ namespace TacticRPG
         public static Coordinate operator -(Coordinate a, Coordinate b)
         {
             return new Coordinate(a.x - b.x, a.y - b.y);
+        }
+
+        public static bool operator ==(Coordinate a, Coordinate b)
+        {
+            return a.x == b.x && a.y == b.y;
+        }
+
+        public static bool operator !=(Coordinate a, Coordinate b)
+        {
+            return a.x != b.x && a.y != b.y;
         }
     }
 }
