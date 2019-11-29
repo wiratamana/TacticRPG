@@ -13,10 +13,10 @@ namespace TacticRPG
         public int distanceToDestinationNode;
         public int totalCost { get { return travelDistance + distanceToDestinationNode; } }
 
-        public NodeCost(Node current, int travelDistance, Node start)
+        public NodeCost(Node current, int travelDistance, Node destination)
         {
-            this.travelDistance = Node.GetDistance(current, start);
-            distanceToDestinationNode = travelDistance + 1;
+            distanceToDestinationNode = Node.GetDistance(current, destination);
+            this.travelDistance = travelDistance + 1;
         }
 
         public static bool operator >(NodeCost a, NodeCost b)
@@ -26,7 +26,12 @@ namespace TacticRPG
                 return true;
             }
 
-            if(a.distanceToDestinationNode > b.distanceToDestinationNode)
+            if (a.travelDistance > b.travelDistance)
+            {
+                return true;
+            }
+
+            if (a.distanceToDestinationNode > b.distanceToDestinationNode)
             {
                 return true;
             }
@@ -37,6 +42,11 @@ namespace TacticRPG
         public static bool operator <(NodeCost a, NodeCost b)
         {
             if (a.totalCost < b.totalCost)
+            {
+                return true;
+            }
+
+            if (a.travelDistance < b.travelDistance)
             {
                 return true;
             }

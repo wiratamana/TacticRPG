@@ -55,6 +55,12 @@ namespace TacticRPG
                     continue;
                 }
 
+                var go = GameObject.Find(a.coordinate.ToString());
+                if(go != null)
+                {
+                    Destroy(go);
+                }
+
                 a.GetComponent<SpriteRenderer>().color = Color.white;
             }
         }
@@ -86,6 +92,18 @@ namespace TacticRPG
                         nodeComponent.GetComponent<SpriteRenderer>().color = Color.gray;
                     }
 
+                    if(x > 2 && y == 5)
+                    {
+                        nodeComponent.isTraversible = false;
+                        nodeComponent.GetComponent<SpriteRenderer>().color = Color.gray;
+                    }
+
+                    if (x > 1 && x < height - 1 && y == 3)
+                    {
+                        nodeComponent.isTraversible = false;
+                        nodeComponent.GetComponent<SpriteRenderer>().color = Color.gray;
+                    }
+
                     battlefield.field[x, y] = nodeComponent;
                 }
             }
@@ -100,6 +118,12 @@ namespace TacticRPG
 
         public void InstantiateDirectionArrow(CheckedNode.Direction dir, Coordinate coor)
         {
+            var duplicate = GameObject.Find(coor.ToString());
+            if (duplicate != null)
+            {
+                Destroy(duplicate);
+            }
+
             GameObject go = null;
             switch (dir)
             {
@@ -121,6 +145,7 @@ namespace TacticRPG
 
             if(go != null)
             {
+                go.name = coor.ToString();
                 go.transform.position = new Vector3(coor.x, coor.y);
             }
         }

@@ -35,7 +35,7 @@ namespace TacticRPG
             checkedNode.Clear();
 
             listAvailableNode.Add(start);
-            checkedNode.Add(start.coordinate, new CheckedNode(start.coordinate, new NodeCost(start, 0, start), CheckedNode.Direction.None));
+            checkedNode.Add(start.coordinate, new CheckedNode(start.coordinate, new NodeCost(start, -1, start), CheckedNode.Direction.None));
 
             isPathToDestinationFound = false;
             while (isPathToDestinationFound == false && listAvailableNode.Count > 0)
@@ -51,7 +51,7 @@ namespace TacticRPG
 
                 listAvailableNode = listAvailableNode.Distinct().ToList();
 
-                listAvailableNode = listAvailableNode.OrderBy(x => checkedNode[x.coordinate].nodeCost.totalCost + checkedNode[x.coordinate].nodeCost.distanceToDestinationNode).ToList();
+                listAvailableNode = listAvailableNode.OrderBy(x => checkedNode[x.coordinate].nodeCost.totalCost).ToList();
 
                 yield return new WaitForSeconds(0.5f);
             }
@@ -107,10 +107,25 @@ namespace TacticRPG
             }
 
             var neighbourNode = battlefield.GetNode(checkCoordinate);
-            var travelDistance = this.checkedNode.ContainsKey(node.coordinate) ? 
-                this.checkedNode[node.coordinate].nodeCost.travelDistance + 1 : 0;
+            if(this.checkedNode.ContainsKey(neighbourNode.coordinate) == true && 
+                this.checkedNode.ContainsKey(node.coordinate) == true)
+            {
+                var neighbourTravelDistance = this.checkedNode[neighbourNode.coordinate].nodeCost.travelDistance;
+                var currentTravelDistance = this.checkedNode[node.coordinate].nodeCost.travelDistance;
 
-            var cost = new NodeCost(neighbourNode, travelDistance, start);
+                if(neighbourTravelDistance <= currentTravelDistance)
+                {
+                    var newCheckedNode = this.checkedNode[node.coordinate];
+                    newCheckedNode.nodeCost.travelDistance = neighbourTravelDistance + 1;
+                    this.checkedNode[node.coordinate] = newCheckedNode;
+                }
+            }
+
+
+            var travelDistance = this.checkedNode.ContainsKey(node.coordinate) ? 
+                this.checkedNode[node.coordinate].nodeCost.travelDistance : 0;
+
+            var cost = new NodeCost(neighbourNode, travelDistance, destination);
             Debug.Log($"travelDistance : {travelDistance}, coor : {neighbourNode.coordinate}, cost : {cost}");
 
             var checkedNode = new CheckedNode(checkCoordinate, cost, CheckedNode.GetReverseDirection(dir));
