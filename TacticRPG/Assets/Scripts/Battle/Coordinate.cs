@@ -77,5 +77,10 @@ namespace TacticRPG
         {
             return a.x != b.x && a.y != b.y;
         }
+
+        public override string ToString()
+        {
+            return $"x : {x} | y : {y}";
+        }
     }
 }

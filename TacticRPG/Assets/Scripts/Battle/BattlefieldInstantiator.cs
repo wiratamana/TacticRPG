@@ -15,6 +15,11 @@ namespace TacticRPG
         public Node start;
         public Node destination;
 
+        public GameObject top;
+        public GameObject bot;
+        public GameObject left;
+        public GameObject right;
+
         void Start()
         {
             battlefield = InstantiateBattlefield();
@@ -91,6 +96,33 @@ namespace TacticRPG
             var go = new GameObject("Pathfinding").AddComponent<Pathfinding>();
             go.battlefield = battlefield;
             return go;
+        }
+
+        public void InstantiateDirectionArrow(CheckedNode.Direction dir, Coordinate coor)
+        {
+            GameObject go = null;
+            switch (dir)
+            {
+                case CheckedNode.Direction.None:
+                    break;
+                case CheckedNode.Direction.Up:
+                    go = Instantiate(top);
+                    break;
+                case CheckedNode.Direction.Down:
+                    go = Instantiate(bot);
+                    break;
+                case CheckedNode.Direction.Right:
+                    go = Instantiate(right);
+                    break;
+                case CheckedNode.Direction.Left:
+                    go = Instantiate(left);
+                    break;
+            }
+
+            if(go != null)
+            {
+                go.transform.position = new Vector3(coor.x, coor.y);
+            }
         }
     }
 }

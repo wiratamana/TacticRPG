@@ -9,14 +9,14 @@ namespace TacticRPG
     [System.Serializable]
     public struct NodeCost
     {
-        public int distanceFromStartingNode;
+        public int travelDistance;
         public int distanceToDestinationNode;
-        public int totalCost { get { return distanceFromStartingNode + distanceToDestinationNode; } }
+        public int totalCost { get { return travelDistance + distanceToDestinationNode; } }
 
-        public NodeCost(Node current, Node destination, Node start)
+        public NodeCost(Node current, int travelDistance, Node start)
         {
-            distanceFromStartingNode = Node.GetDistance(current, start);
-            distanceToDestinationNode = Node.GetDistance(current, destination);
+            this.travelDistance = Node.GetDistance(current, start);
+            distanceToDestinationNode = travelDistance + 1;
         }
 
         public static bool operator >(NodeCost a, NodeCost b)
@@ -47,6 +47,11 @@ namespace TacticRPG
             }
 
             return false;
+        }
+
+        public override string ToString()
+        {
+            return $"travelDistance : {travelDistance} | distanceToDestinationNode {distanceToDestinationNode} | totalCost : {totalCost}";
         }
     }
 }

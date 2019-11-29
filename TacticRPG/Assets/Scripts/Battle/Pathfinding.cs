@@ -19,15 +19,23 @@ namespace TacticRPG
 
         public Queue<Node> GetPath(Node start, Node destination)
         {
-            Benchmark.Start();
-
             this.destination = destination;
             this.start = start;
+
+            StartCoroutine(Test());
+
+            return null;
+        }
+
+        private IEnumerator Test()
+        {
+            Benchmark.Start();
+
             listAvailableNode.Clear();
             checkedNode.Clear();
 
             listAvailableNode.Add(start);
-            checkedNode.Add(start.coordinate, new CheckedNode(start.coordinate, new NodeCost(start, destination, start), CheckedNode.Direction.None));
+            checkedNode.Add(start.coordinate, new CheckedNode(start.coordinate, new NodeCost(start, 0, start), CheckedNode.Direction.None));
 
             isPathToDestinationFound = false;
             while (isPathToDestinationFound == false && listAvailableNode.Count > 0)
@@ -37,25 +45,28 @@ namespace TacticRPG
 
                 foreach (var openedNode in resultOpenNode)
                 {
+                    battlefield.GetNode(openedNode.coordinate).GetComponent<SpriteRenderer>().color = Color.green ;
                     listAvailableNode.Add(battlefield.GetNode(openedNode.coordinate));
                 }
 
                 listAvailableNode = listAvailableNode.Distinct().ToList();
 
-                listAvailableNode = listAvailableNode.OrderBy(x => new NodeCost(x, destination, start).totalCost + new NodeCost(x, destination, start).distanceToDestinationNode).ToList();
+                listAvailableNode = listAvailableNode.OrderBy(x => checkedNode[x.coordinate].nodeCost.totalCost + checkedNode[x.coordinate].nodeCost.distanceToDestinationNode).ToList();
+
+                yield return new WaitForSeconds(0.5f);
             }
 
-            if(isPathToDestinationFound == true)
+            if (isPathToDestinationFound == true)
             {
                 var dir = new List<Coordinate>();
                 dir.Add(destination.coordinate);
 
                 var coor = destination.coordinate;
                 Debug.Log($"coor = x:{coor.x} y:{coor.y}");
-                while(true)
+                while (true)
                 {
                     var comeFrom = checkedNode[coor].comeFrom;
-                    coor = coor + CheckedNode.GetCoordinateDirection(comeFrom);
+                    coor = coor + CheckedNode.GetCoordinateFromDirection(comeFrom);
                     dir.Add(coor);
 
                     if (coor == start.coordinate)
@@ -63,15 +74,16 @@ namespace TacticRPG
                         break;
                     }
                 }
-                
-                for(int i = 0; i < dir.Count; i++)
+
+                for (int i = 0; i < dir.Count; i++)
                 {
                     battlefield.field[dir[i].x, dir[i].y].GetComponent<SpriteRenderer>().color = Color.red;
+
+                    yield return new WaitForSeconds(0.5f);
                 }
             }
 
             Benchmark.Stop();
-            return null;
         }
 
         private List<CheckedNode> OpenNode(Node node)
@@ -95,13 +107,18 @@ namespace TacticRPG
             }
 
             var neighbourNode = battlefield.GetNode(checkCoordinate);
-            var cost = new NodeCost(neighbourNode, destination, start);
+            var travelDistance = this.checkedNode.ContainsKey(node.coordinate) ? 
+                this.checkedNode[node.coordinate].nodeCost.travelDistance + 1 : 0;
+
+            var cost = new NodeCost(neighbourNode, travelDistance, start);
+            Debug.Log($"travelDistance : {travelDistance}, coor : {neighbourNode.coordinate}, cost : {cost}");
 
             var checkedNode = new CheckedNode(checkCoordinate, cost, CheckedNode.GetReverseDirection(dir));
 
             if (neighbourNode == destination)
             {
                 this.checkedNode.Add(checkCoordinate, checkedNode);
+                BattlefieldInstantiator.Instance.InstantiateDirectionArrow(checkedNode.comeFrom, checkedNode.coordinate);
                 isPathToDestinationFound = true;
                 return;
             }
@@ -109,12 +126,14 @@ namespace TacticRPG
             if (this.checkedNode.ContainsKey(checkCoordinate) == false)
             {
                 nodes.Add(checkedNode);
+                BattlefieldInstantiator.Instance.InstantiateDirectionArrow(checkedNode.comeFrom, checkedNode.coordinate);
                 this.checkedNode.Add(checkCoordinate, checkedNode);
                 return;
             }
 
             if (cost < this.checkedNode[checkCoordinate].nodeCost)
             {
+                BattlefieldInstantiator.Instance.InstantiateDirectionArrow(checkedNode.comeFrom, checkedNode.coordinate);
                 this.checkedNode[checkCoordinate] = checkedNode;
             }
         }

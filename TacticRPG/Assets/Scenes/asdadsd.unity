@@ -152,6 +152,14 @@ MonoBehaviour:
   width: 10
   height: 10
   prefab: {fileID: 3310560530900357871, guid: e14bb61849ccc9646bd99fdac2fcc72e, type: 3}
+  pathfinding: {fileID: 0}
+  battlefield: {fileID: 0}
+  start: {fileID: 0}
+  destination: {fileID: 0}
+  top: {fileID: 4343691308289930098, guid: d1ce627e85091c049806cf7ddd8d45b8, type: 3}
+  bot: {fileID: 5946032872142381620, guid: ad19358404ef8444394b0f6424ba5657, type: 3}
+  left: {fileID: 1403950135607301717, guid: 1029d476b6ca3be428aca417039cdc00, type: 3}
+  right: {fileID: 2001906691693113622, guid: 479ae78519272094e9ad59f1de99d773, type: 3}
 --- !u!4 &1817030515
 Transform:
   m_ObjectHideFlags: 0

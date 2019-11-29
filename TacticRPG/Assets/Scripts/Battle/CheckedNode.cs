@@ -46,18 +46,18 @@ namespace TacticRPG
             }
         }
 
-        public static Coordinate GetCoordinateDirection(Direction coor)
+        public static Coordinate GetCoordinateFromDirectionReverse(Direction coor)
         {
             switch (coor)
             {
                 case Direction.Up:
-                    return Coordinate.directionUp;
-                case Direction.Down:
                     return Coordinate.directionDown;
+                case Direction.Down:
+                    return Coordinate.directionUp;
                 case Direction.Right:
-                    return Coordinate.directionRight;
-                case Direction.Left:
                     return Coordinate.directionLeft;
+                case Direction.Left:
+                    return Coordinate.directionRight;
 
                 default:
                     return Coordinate.directionZero;
